@@ -155,19 +155,18 @@ public class ElevatorButtons extends JPanel {
     private void updateButtonStates() {
         List<Integer> elevatorTargets = elevatorTrack.getQueueManager().getElevatorTargetsList();
         int currentFloor = elevatorTrack.getCabinFloor();
-        boolean isMoving = elevatorTrack.getSimulationController().isMoving();
         boolean hasPassengers = elevatorTrack.getPassengerManager().hasPassengersInElevator();
         
         for (Map.Entry<Integer, JButton> entry : floorButtons.entrySet()) {
             int floor = entry.getKey();
             JButton button = entry.getValue();
             
-            updateSingleButtonState(button, floor, elevatorTargets, currentFloor, isMoving, hasPassengers);
+            updateSingleButtonState(button, floor, elevatorTargets, currentFloor,hasPassengers);
         }
     }
     
     private void updateSingleButtonState(JButton button, int floor, List<Integer> elevatorTargets, 
-                                       int currentFloor, boolean isMoving, boolean hasPassengers) {
+                                       int currentFloor, boolean hasPassengers) {
         
         if (!buttonsEnabled || !hasPassengers) {
             button.setEnabled(false);
@@ -181,10 +180,7 @@ public class ElevatorButtons extends JPanel {
             button.setEnabled(false);
             button.setBackground(Color.LIGHT_GRAY);
             
-        } else if (isMoving || elevatorTrack.getAnimationController().isAnimationRunning()) {
-            button.setEnabled(false);
-            
-        } else {
+        }  else {
             button.setEnabled(true);
             button.setBackground(Color.WHITE);
         }
@@ -208,55 +204,5 @@ public class ElevatorButtons extends JPanel {
     
     public List<Integer> getQueuedRequests() {
         return new ArrayList<>(elevatorTrack.getQueueManager().getElevatorTargetsList());
-    }
-    
-    public void onAnimationComplete(int arrivedFloor) {
-        JButton arrivedButton = floorButtons.get(arrivedFloor);
-        if (arrivedButton != null) {
-            arrivedButton.setBackground(Color.CYAN);
-            
-            Timer colorResetTimer = new Timer(1000, e -> {
-                updateButtonStates();
-                ((Timer) e.getSource()).stop();
-            });
-            colorResetTimer.setRepeats(false);
-            colorResetTimer.start();
-        }
-    }
-    
-    public void onElevatorMovementStart(int targetFloor) {
-        isMoving = true;
-        updateButtonStates();
-    }
-    
-    public void onElevatorMovementStop(int currentFloor) {
-        isMoving = false;
-        
-        Timer updateTimer = new Timer(200, e -> {
-            updateButtonStates();
-            ((Timer) e.getSource()).stop();
-        });
-        updateTimer.setRepeats(false);
-        updateTimer.start();
-    }
-    
-    public void resetAllStates() {
-        buttonsEnabled = false;
-        isMoving = false;
-        
-        for (JButton button : floorButtons.values()) {
-            button.setEnabled(false);
-            button.setBackground(Color.DARK_GRAY);
-        }
-    }
-    
-    public boolean areButtonsEnabled() {
-        return buttonsEnabled && elevatorTrack.getPassengerManager().hasPassengersInElevator() &&
-               !elevatorTrack.getAnimationController().isAnimationRunning() &&
-               !elevatorTrack.getSimulationController().isMoving();
-    }
-    
-    public Map<Integer, JButton> getFloorButtons() {
-        return new HashMap<>(floorButtons);
     }
 }

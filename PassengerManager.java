@@ -101,7 +101,6 @@ public class PassengerManager {
         }
     }
     
-    unloadPassengersByDestination();
 }
 
     public void checkForAdditionalPassengersAfterExit() {
@@ -125,18 +124,6 @@ public class PassengerManager {
         immediateBoard.start();
     }
 }
-    
-    public void unloadPassengersByDestination() {
-        int cabinFloor = elevatorTrack.getCabinFloor();
-        passengersInElevator.removeIf(passenger -> passenger.getTargetFloor() == cabinFloor);
-        
-        if(passengersInElevator.isEmpty() && elevatorTrack.getElevatorButtons() != null) {
-            elevatorTrack.getElevatorButtons().disableFloorSelection();
-        }
-        
-        elevatorTrack.getSimulationController().checkSimulationEndConditions();
-        elevatorTrack.repaint();
-    }
     
     public void setPassengerDestinations(int targetFloor) {
         for(Passenger passenger : passengersInElevator) {

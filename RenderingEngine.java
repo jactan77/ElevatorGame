@@ -64,7 +64,7 @@ public class RenderingEngine {
                 g.setColor(Color.DARK_GRAY);
             } else if(inQueue) {
                 g.setColor(Color.ORANGE);
-            } else if(isEnabled && hasPassengers && !elevatorTrack.getSimulationController().isMoving()) {
+            } else if(isEnabled && hasPassengers) {
                 g.setColor(Color.GREEN);
             } else {
                 g.setColor(Color.LIGHT_GRAY);
